@@ -1,0 +1,80 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+@model ResultVM
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+
+<link href="~/css/Index.css" rel="stylesheet" />
+
+@if (SignInManager.IsSignedIn(User))
+{
+    <form asp-action="Play" asp-controller="Home" method="post">
+        <h4>Type 4 digits</h4>
+        <div class="row mb-2">
+            <input type="number" asp-for="first" class="form-control col-sm-4" min="1" max="9">
+        </div>
+        <div class="row mb-2">
+            <input type="number" asp-for="second" class="form-control col-sm-4" min="0" max="9">
+        </div>
+        <div class="row mb-2">
+            <input type="number" asp-for="third" class="form-control col-sm-4" min="0" max="9">
+        </div>
+        <div class="row mb-2">
+            <input type="number" asp-for="fourth" class="form-control col-sm-4" min="0" max="9">
+        </div>
+
+
+        @if (Model.leftTries == (int)Enums.leftTries.endValue)
+        {
+            <input type="hidden" asp-for="newGame" value="true">
+            <button type="submit" class="btn btn-primary">New Game</button>
+        }
+        else
+        {
+            <input type="hidden" asp-for="newGame" value="false">
+            <button type="submit" class="btn btn-success">Guess the number</button>
+        }
+    </form>
+
+    @if (Model.playedGame)
+    {
+        <div class="row mt-5">
+            <p class="result">
+                Bulls = @Model.bulls
+            </p>
+        </div>
+        <div class="row">
+            <p class="result">
+                Cows =  @Model.cows
+            </p>
+        </div>
+        <div class="row">
+            <p class="result">
+                Left tries =  @Model.leftTries
+            </p>
+        </div>
+    }
+    @if (Model.resultMessage != null)
+    {
+        <div class="row">
+            <div class="alert alert-info" role="alert">
+                Message =  @Model.resultMessage
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="text-center">
+        <img src="https://benjdd.com/courses/cs110/fall-2018/pas/bulls_and_cows/res/bulls_and_cows.png" class="img-fluid w-75" alt="Responsive image">
+    </div>
+    <div class="text-center">
+        <h4>How to play!</h4>
+        <h5>The computer generates a 4-digit number.</h5>
+        <h5>There can be no repeating digits and the number cannot start with 0.</h5>
+        <h5>You have 20 turns to guess the number.</h5>
+        <h5>In order to play, you need to login or register!</h5>
+    </div>
+}
