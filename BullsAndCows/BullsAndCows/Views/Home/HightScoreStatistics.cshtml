@@ -1,1 +1,15 @@
-﻿<p>HightScore Statistics</p>
+﻿@model HightScoresStatisticsVM
+
+
+<div class="row">
+    @foreach(var user in Model.listScoresStatistics)
+    {
+        <p>
+            @user.Username
+        </p>
+        <p>
+            @user.Score
+        </p>
+    }
+
+</div>

@@ -37,6 +37,8 @@ namespace BullsAndCows
             services.AddRazorPages();
             services.AddSingleton<IGame, GameService>();
             services.AddSingleton<Random>();
+            services.AddTransient<ScoreStatisticsData>();
+        
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

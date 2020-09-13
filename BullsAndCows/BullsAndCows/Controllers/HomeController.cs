@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using BullsAndCows.Models;
 using BullsAndCows.Interfaces;
+using System.Security.Claims;
+using BullsAndCows.Data;
 
 namespace BullsAndCows.Controllers
 {
@@ -14,43 +16,52 @@ namespace BullsAndCows.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IGame _gameService;
+        private ApplicationDbContext _dbContext;
+        private ScoreStatisticsData _scoreStatistics;
 
-        public HomeController(ILogger<HomeController> logger, IGame gameService)
+        public HomeController(ILogger<HomeController> logger, IGame gameService, ApplicationDbContext dbContext,
+            ScoreStatisticsData scoreStatisticsData)
         {
             _logger = logger;
             _gameService = gameService;
+            _dbContext = dbContext;
+            _scoreStatistics = scoreStatisticsData;
         }
 
         public IActionResult Index()
         {
             ResultVM result = new ResultVM();
             result.playedGame = false;
-            result.leftTries = (int)Enums.leftTries.initialValue;
+            result.leftTries = (int)Enums.Tries.initialValue;
             return View(result);
         }
 
         public IActionResult Play(Digit digits)
         {
-            ResultVM result = new ResultVM();
-            if (digits.first > 0)
+            ResultVM result;
+            ClaimsPrincipal currentUser = User;
+
+            result = _gameService.PlayGame(digits, currentUser);
+            if (result.leftTries == (int)Enums.Tries.endValue)
             {
-                result = _gameService.PlayGame(digits);
-                if (result.leftTries == (int)Enums.leftTries.endValue)
-                {
-                    ModelState.Clear();
-                }
+                ModelState.Clear();
             }
-            else
+            if(result.resultMessage != null && result.resultMessage[1] == "50")
             {
-                result.leftTries = (int)Enums.leftTries.initialValue;
-                result.resultMessage = "Please provide first digit greater than 0";
+                _scoreStatistics.SaveUserScore(50, result.leftTries);
             }
+
             return View("./Index", result);
         }
 
         public IActionResult HightScoreStatistics()
         {
-            return View();
+            List<HighScoreStatistics> listScoreStatistics = new List<HighScoreStatistics>();
+            listScoreStatistics = _dbContext.HighScores.ToList();
+
+            HightScoresStatisticsVM hightScoresStatisticsVM = new HightScoresStatisticsVM();
+            hightScoresStatisticsVM.listScoresStatistics = listScoreStatistics;
+            return View(hightScoresStatisticsVM);
         }
 
         public IActionResult Privacy()
@@ -58,10 +69,5 @@ namespace BullsAndCows.Controllers
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

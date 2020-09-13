@@ -1,7 +1,12 @@
-﻿using BullsAndCows.Interfaces;
+﻿using BullsAndCows.Data;
+using BullsAndCows.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BullsAndCows
@@ -10,14 +15,15 @@ namespace BullsAndCows
     {
         private Random _generateRandomNumber;
         private string generatedNumber;
-        private int leftTries = (int)Enums.leftTries.initialValue;
+        private int leftTries = (int)Enums.Tries.initialValue;
+
         public GameService(Random generateRandomNumber)
         {
             _generateRandomNumber = generateRandomNumber;
             generatedNumber = GenerateNumber();
         }
 
-        public ResultVM PlayGame(Digit digits)
+        public ResultVM PlayGame(Digit digits, ClaimsPrincipal currentUser)
         {
             ResultVM result = new ResultVM();
             
@@ -26,14 +32,22 @@ namespace BullsAndCows
                 digits.third.ToString() +
                 digits.fourth.ToString();
 
+            if (!DistinctDigits(guessedNumber) || digits.first < 1)
+            {
+                result.leftTries = (int)Enums.Tries.initialValue;
+                result.resultMessage[0] = "There can be no repeating digits and the number cannot start with 0.";
+                return result;
+            }
+
             if (digits.newGame) {
                 generatedNumber = GenerateNumber();
-                leftTries = (int)Enums.leftTries.initialValue;
+                leftTries = (int)Enums.Tries.initialValue;
             }
 
             if (guessedNumber == generatedNumber)
             {
-                result.resultMessage = FinishGame("User", int.Parse(generatedNumber));
+                result.resultMessage = FinishGame("User", int.Parse(generatedNumber), leftTries);
+                result.leftTries = (int)Enums.Tries.endValue;
             }
             else
             {
@@ -44,13 +58,19 @@ namespace BullsAndCows
                 result.playedGame = true;
             }
             result.leftTries = leftTries;
-            if (leftTries <= (int)Enums.leftTries.endValue)
+            if (leftTries <= (int)Enums.Tries.endValue)
             {
-                result.resultMessage = FinishGame("Computer", int.Parse(generatedNumber));
+                result.resultMessage = FinishGame("Computer", int.Parse(generatedNumber), leftTries);
             }
 
             return result;
         }
+
+        private bool DistinctDigits(string guessedNumber)
+        {
+            return guessedNumber.Distinct().Count() == guessedNumber.Length;
+        }
+
         private int[] CountBullsAndCows(string guessedNumber, string generatedNumber)
         {
             int bulls = 0;
@@ -91,23 +111,44 @@ namespace BullsAndCows
 
         private string GenerateNumber()
         {
-            string num = _generateRandomNumber.Next(1000,10000).ToString();
-            return num;
+            string number = "";
+            while (number.Length < 4)
+            {
+                string temp = _generateRandomNumber.Next(0, 9).ToString();
+                if (number.Length == 0 && temp == "0")
+                {
+                    continue;
+                }
+                else if (number.Contains(temp))
+                {
+                    continue;
+                }
+                else
+                {
+                    number += temp;
+                }
+            }
+            return number;
         }
 
-        public string  FinishGame(string winner, int generatedNumber)
+        public string[]  FinishGame(string winner, int generatedNumber, int leftTries)
         {
-            string message = "";
+            string[] message = new string [3];
+            int tries = (int)Enums.Tries.initialValue - leftTries;
             if (winner == "User")
             {
-                message = "Congratulations! You guessed the number. You score 50";
+                message[0] = "Congratulations! You guessed the number. You score 50";
+                message[1] = "50";
+                message[2] = $"{tries}";
             }
             else if (winner == "Computer")
             {
-                message = $"Sorry, the number was - {generatedNumber}";
+                message[0] = $"Sorry, the number was - {generatedNumber}";
             }
             return message;
         }
-       
+
+        
+
     }
 }

@@ -11,6 +11,8 @@ namespace BullsAndCows.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
+
         }
+        public DbSet<HighScoreStatistics> HighScores { get; set; }
     }
 }

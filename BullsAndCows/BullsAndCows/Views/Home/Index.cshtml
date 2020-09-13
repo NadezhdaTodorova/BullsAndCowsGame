@@ -26,7 +26,7 @@
         </div>
 
 
-        @if (Model.leftTries == (int)Enums.leftTries.endValue)
+        @if (Model.leftTries == (int)Enums.Tries.endValue)
         {
             <input type="hidden" asp-for="newGame" value="true">
             <button type="submit" class="btn btn-primary">New Game</button>
@@ -58,9 +58,9 @@
     }
     @if (Model.resultMessage != null)
     {
-        <div class="row">
+        <div class="row mt-5">
             <div class="alert alert-info" role="alert">
-                Message =  @Model.resultMessage
+                @Model.resultMessage
             </div>
         </div>
     }

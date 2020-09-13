@@ -7,7 +7,7 @@ namespace BullsAndCows
 {
     public class Enums
     {
-       public enum leftTries
+       public enum Tries
         {
             initialValue = 3,
             endValue = 0
