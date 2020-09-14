@@ -9,8 +9,14 @@ namespace BullsAndCows
     {
        public enum Tries
         {
-            initialValue = 3,
+            initialValue = 20,
             endValue = 0
+        }
+
+        public enum WinnerScore
+        {
+            userWinScore = 50,
+            computerWinScore = 0
         }
     }
 }

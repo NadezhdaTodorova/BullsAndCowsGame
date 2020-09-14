@@ -4,14 +4,16 @@ using BullsAndCows.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace BullsAndCows.Data.Migrations
+namespace BullsAndCows.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200914120916_AppDbMigrationUpdated1")]
+    partial class AppDbMigrationUpdated1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,6 +40,31 @@ namespace BullsAndCows.Data.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("HighScores");
+                });
+
+            modelBuilder.Entity("BullsAndCows.UserTurn", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Bulls")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cows")
+                        .HasColumnType("int");
+
+                    b.Property<string>("GeneratedNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GuessedNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("LeftTries")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("UserTurns");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

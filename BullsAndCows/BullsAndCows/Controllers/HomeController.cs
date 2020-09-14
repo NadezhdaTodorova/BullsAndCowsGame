@@ -16,16 +16,12 @@ namespace BullsAndCows.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IGame _gameService;
-        private ApplicationDbContext _dbContext;
-        private ScoreStatisticsData _scoreStatistics;
-
-        public HomeController(ILogger<HomeController> logger, IGame gameService, ApplicationDbContext dbContext,
-            ScoreStatisticsData scoreStatisticsData)
+        ScoreStatisticsData _scoreStatisticsData;
+        public HomeController(ILogger<HomeController> logger, IGame gameService, ScoreStatisticsData scoreStatisticsData)
         {
             _logger = logger;
             _gameService = gameService;
-            _dbContext = dbContext;
-            _scoreStatistics = scoreStatisticsData;
+            _scoreStatisticsData = scoreStatisticsData;
         }
 
         public IActionResult Index()
@@ -46,22 +42,15 @@ namespace BullsAndCows.Controllers
             {
                 ModelState.Clear();
             }
-            if(result.resultMessage != null && result.resultMessage[1] == "50")
-            {
-                _scoreStatistics.SaveUserScore(50, result.leftTries);
-            }
-
+            
             return View("./Index", result);
         }
 
         public IActionResult HightScoreStatistics()
         {
-            List<HighScoreStatistics> listScoreStatistics = new List<HighScoreStatistics>();
-            listScoreStatistics = _dbContext.HighScores.ToList();
-
-            HightScoresStatisticsVM hightScoresStatisticsVM = new HightScoresStatisticsVM();
-            hightScoresStatisticsVM.listScoresStatistics = listScoreStatistics;
-            return View(hightScoresStatisticsVM);
+            HightScoresStatisticsVM scoreStatistics = new HightScoresStatisticsVM();
+             scoreStatistics.listScoresStatistics = _scoreStatisticsData.GetHighScoreStatistics();
+            return View(scoreStatistics);
         }
 
         public IActionResult Privacy()

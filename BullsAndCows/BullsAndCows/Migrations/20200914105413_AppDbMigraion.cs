@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BullsAndCows.Data.Migrations
+namespace BullsAndCows.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class AppDbMigraion : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,11 +47,42 @@ namespace BullsAndCows.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "HighScores",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(nullable: true),
+                    Score = table.Column<int>(nullable: false),
+                    NumTries = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HighScores", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserTurns",
+                columns: table => new
+                {
+                    UserName = table.Column<string>(nullable: false),
+                    Bulls = table.Column<int>(nullable: false),
+                    Cows = table.Column<int>(nullable: false),
+                    LeftTries = table.Column<int>(nullable: false),
+                    GuessedNumber = table.Column<string>(nullable: true),
+                    GeneratedNumber = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserTurns", x => x.UserName);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     RoleId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -73,7 +103,7 @@ namespace BullsAndCows.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
                     ClaimValue = table.Column<string>(nullable: true)
@@ -209,6 +239,12 @@ namespace BullsAndCows.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "HighScores");
+
+            migrationBuilder.DropTable(
+                name: "UserTurns");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

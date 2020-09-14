@@ -1,69 +1,87 @@
 ﻿using BullsAndCows.Data;
 using BullsAndCows.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace BullsAndCows
 {
     public class GameService : IGame
     {
         private Random _generateRandomNumber;
-        private string generatedNumber;
-        private int leftTries = (int)Enums.Tries.initialValue;
+        private static string generatedNumber;
+        private ScoreStatisticsData _scoreStatistics;
+        private static string gameId;
+        private static int leftTries;
 
-        public GameService(Random generateRandomNumber)
+        public GameService(Random generateRandomNumber,
+            ScoreStatisticsData scoreStatisticsData)
         {
             _generateRandomNumber = generateRandomNumber;
-            generatedNumber = GenerateNumber();
+            _scoreStatistics = scoreStatisticsData;
         }
 
         public ResultVM PlayGame(Digit digits, ClaimsPrincipal currentUser)
         {
             ResultVM result = new ResultVM();
-            
             string guessedNumber = digits.first.ToString() +
                 digits.second.ToString() +
                 digits.third.ToString() +
                 digits.fourth.ToString();
 
-            if (!DistinctDigits(guessedNumber) || digits.first < 1)
+            if (!DistinctDigits(guessedNumber))
             {
-                result.leftTries = (int)Enums.Tries.initialValue;
-                result.resultMessage[0] = "There can be no repeating digits and the number cannot start with 0.";
+                leftTries = (int)Enums.Tries.initialValue;
+                result.resultMessage = new string[3];
+                result.resultMessage[0] = "There can be no repeating digits!";
                 return result;
             }
 
             if (digits.newGame) {
+                Guid g = Guid.NewGuid();
                 generatedNumber = GenerateNumber();
                 leftTries = (int)Enums.Tries.initialValue;
+                gameId = g.ToString();
             }
 
             if (guessedNumber == generatedNumber)
             {
                 result.resultMessage = FinishGame("User", int.Parse(generatedNumber), leftTries);
                 result.leftTries = (int)Enums.Tries.endValue;
+                return result;
             }
             else
             {
-                int[] cowsAndBulls = CountBullsAndCows(guessedNumber, generatedNumber);
-                result.cows = cowsAndBulls[0];
-                result.bulls = cowsAndBulls[1];
-                leftTries--;
+                HandleTurn(guessedNumber);
                 result.playedGame = true;
+                result.leftTries = leftTries;
             }
-            result.leftTries = leftTries;
-            if (leftTries <= (int)Enums.Tries.endValue)
+
+            result.listUserTurns = _scoreStatistics.GetCurrentUserTurns(gameId);
+
+            if (result.leftTries <= (int)Enums.Tries.endValue)
             {
                 result.resultMessage = FinishGame("Computer", int.Parse(generatedNumber), leftTries);
             }
 
             return result;
+        }
+
+        private void HandleTurn(string guessedNumber)
+        {
+            UserTurn userTurn = new UserTurn();
+            int[] cowsAndBulls = CountBullsAndCows(guessedNumber, generatedNumber);
+
+            userTurn.Cows = cowsAndBulls[0];
+            userTurn.Bulls = cowsAndBulls[1];
+            userTurn.GuessedNumber = guessedNumber;
+            userTurn.GeneratedNumber = generatedNumber;
+            leftTries = leftTries - 1;
+            userTurn.LeftTries = leftTries;
+            userTurn.GameId = gameId;
+
+            _scoreStatistics.SaveTurn(userTurn);
         }
 
         private bool DistinctDigits(string guessedNumber)
@@ -115,11 +133,7 @@ namespace BullsAndCows
             while (number.Length < 4)
             {
                 string temp = _generateRandomNumber.Next(0, 9).ToString();
-                if (number.Length == 0 && temp == "0")
-                {
-                    continue;
-                }
-                else if (number.Contains(temp))
+                if (number.Contains(temp))
                 {
                     continue;
                 }
@@ -138,8 +152,9 @@ namespace BullsAndCows
             if (winner == "User")
             {
                 message[0] = "Congratulations! You guessed the number. You score 50";
-                message[1] = "50";
+                message[1] = Enums.WinnerScore.userWinScore.ToString();
                 message[2] = $"{tries}";
+                _scoreStatistics.SaveUserScore(50, tries);
             }
             else if (winner == "Computer")
             {

@@ -6,6 +6,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200914104958_ApplicationDbMigration.cs" />
+    <Compile Remove="Migrations\20200914104958_ApplicationDbMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200914105110_UserTurnMigration.cs" />
+    <Compile Remove="Migrations\20200914105110_UserTurnMigration.Designer.cs" />
+    <Compile Remove="Migrations\20200914120423_AppDbMigrationUpdated2.cs" />
+    <Compile Remove="Migrations\20200914120423_AppDbMigrationUpdated2.Designer.cs" />
+    <Compile Remove="Migrations\20200914120650_AppDbMigrationUpdated3.cs" />
+    <Compile Remove="Migrations\20200914120650_AppDbMigrationUpdated3.Designer.cs" />
+    <Compile Remove="Migrations\20200914120747_AppDbMigrationUpdated4.cs" />
+    <Compile Remove="Migrations\20200914120747_AppDbMigrationUpdated4.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.8" />

@@ -1,15 +1,30 @@
 ﻿@model HightScoresStatisticsVM
 
+<div class="col-lg-6">
+    <table class="table table-bordered table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th>User</th>
+                <th>Score</th>
+                <th>Tries</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.listScoresStatistics)
+            {
+                <tr>
+                    <td>
+                        @user.Username
+                    </td>
+                    <td>
+                        @user.Score
+                    </td>
+                    <td>
+                        @user.NumTries
+                    </td>
+                </tr>
+            }
 
-<div class="row">
-    @foreach(var user in Model.listScoresStatistics)
-    {
-        <p>
-            @user.Username
-        </p>
-        <p>
-            @user.Score
-        </p>
-    }
-
+        </tbody>
+    </table>
 </div>

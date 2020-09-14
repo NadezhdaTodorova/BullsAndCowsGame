@@ -14,5 +14,6 @@ namespace BullsAndCows.Data
 
         }
         public DbSet<HighScoreStatistics> HighScores { get; set; }
+        public DbSet<UserTurn> UserTurns { get; set; }
     }
 }

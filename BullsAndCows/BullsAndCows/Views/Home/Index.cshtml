@@ -10,57 +10,80 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <form asp-action="Play" asp-controller="Home" method="post">
-        <h4>Type 4 digits</h4>
-        <div class="row mb-2">
-            <input type="number" asp-for="first" class="form-control col-sm-4" min="1" max="9">
-        </div>
-        <div class="row mb-2">
-            <input type="number" asp-for="second" class="form-control col-sm-4" min="0" max="9">
-        </div>
-        <div class="row mb-2">
-            <input type="number" asp-for="third" class="form-control col-sm-4" min="0" max="9">
-        </div>
-        <div class="row mb-2">
-            <input type="number" asp-for="fourth" class="form-control col-sm-4" min="0" max="9">
-        </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <form asp-action="Play" asp-controller="Home" method="post">
+                <h4>Type 4 digits</h4>
+                <div class="row mb-2">
+                    <input type="number" asp-for="first" class="form-control col-sm-4" value="0" min="0" max="9">
+                </div>
+                <div class="row mb-2">
+                    <input type="number" asp-for="second" class="form-control col-sm-4" value="0" min="0" max="9">
+                </div>
+                <div class="row mb-2">
+                    <input type="number" asp-for="third" class="form-control col-sm-4" value="0" min="0" max="9">
+                </div>
+                <div class="row mb-2">
+                    <input type="number" asp-for="fourth" class="form-control col-sm-4" value="0" min="0" max="9">
+                </div>
 
 
-        @if (Model.leftTries == (int)Enums.Tries.endValue)
+                @if (Model.leftTries == (int)Enums.Tries.endValue || Model.leftTries == (int)Enums.Tries.initialValue)
+                {
+                    <input type="hidden" asp-for="newGame" value="true">
+                    <button type="submit" class="btn btn-primary">New Game</button>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="newGame" value="false">
+                    <button type="submit" class="btn btn-success">Guess the number</button>
+                }
+            </form>
+        </div>
+
+        @if (Model.playedGame)
         {
-            <input type="hidden" asp-for="newGame" value="true">
-            <button type="submit" class="btn btn-primary">New Game</button>
-        }
-        else
-        {
-            <input type="hidden" asp-for="newGame" value="false">
-            <button type="submit" class="btn btn-success">Guess the number</button>
-        }
-    </form>
+            <div class="col-lg-6">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Bulls</th>
+                            <th>Cows</th>
+                            <th>Guessed number</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var turn in Model.listUserTurns)
+                        {
+                            <tr>
+                                <td>
+                                    @turn.Bulls
+                                </td>
+                                <td>
+                                    @turn.Cows
+                                </td>
+                                <td>
+                                    @turn.GuessedNumber
+                                </td>
+                            </tr>
+                        }
 
-    @if (Model.playedGame)
-    {
-        <div class="row mt-5">
-            <p class="result">
-                Bulls = @Model.bulls
-            </p>
-        </div>
-        <div class="row">
-            <p class="result">
-                Cows =  @Model.cows
-            </p>
-        </div>
-        <div class="row">
-            <p class="result">
-                Left tries =  @Model.leftTries
-            </p>
-        </div>
-    }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="row">
+                <p class="result">
+                    Left tries =  @Model.leftTries
+                </p>
+            </div>
+        }
+    </div>
     @if (Model.resultMessage != null)
     {
         <div class="row mt-5">
             <div class="alert alert-info" role="alert">
-                @Model.resultMessage
+                @Model.resultMessage[0]
             </div>
         </div>
     }
@@ -73,7 +96,8 @@ else
     <div class="text-center">
         <h4>How to play!</h4>
         <h5>The computer generates a 4-digit number.</h5>
-        <h5>There can be no repeating digits and the number cannot start with 0.</h5>
+        <h5>There can be no repeating digits!</h5>
+        <h5>If the matching digits are in their right positions, they are "bulls", if in different positions, they are "cows".</h5>
         <h5>You have 20 turns to guess the number.</h5>
         <h5>In order to play, you need to login or register!</h5>
     </div>

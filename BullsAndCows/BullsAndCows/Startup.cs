@@ -31,11 +31,11 @@ namespace BullsAndCows
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.AddSingleton<IGame, GameService>();
+            services.AddTransient<IGame, GameService>();
             services.AddSingleton<Random>();
             services.AddTransient<ScoreStatisticsData>();
         
