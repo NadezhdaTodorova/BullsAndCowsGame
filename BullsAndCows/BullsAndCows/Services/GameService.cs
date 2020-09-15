@@ -31,22 +31,32 @@ namespace BullsAndCows
                 digits.second.ToString() +
                 digits.third.ToString() +
                 digits.fourth.ToString();
-
-            if (!DistinctDigits(guessedNumber))
+           
+            if (digits.newGame || leftTries == (int)Enums.Tries.endValue)
             {
-                message[0] = "There can be no repeating numbers!";
-                result = HandleResult(leftTries, message);
-                if (leftTries == (int)Enums.Tries.initialValue || leftTries == (int)Enums.Tries.endValue)
-                    result.leftTries = (int)Enums.Tries.initialValue;
-                return result;
-            }
-
-            if (digits.newGame || leftTries == (int)Enums.Tries.endValue) {
                 Guid g = Guid.NewGuid();
                 generatedNumber = GenerateNumber();
                 leftTries = (int)Enums.Tries.initialValue;
                 gameId = g.ToString();
             }
+
+            if (!DistinctDigits(guessedNumber))
+            {
+                result = new ResultVM();
+                message[0] = "There can be no repeating numbers!";
+                if (leftTries == (int)Enums.Tries.initialValue || leftTries == (int)Enums.Tries.endValue)
+                {
+                    result.leftTries = (int)Enums.Tries.initialValue;
+                    result.resultMessage = message;
+                }
+                else
+                {
+                    result = HandleResult(leftTries, message);
+                }
+                return result;
+            }
+
+            
 
             if (guessedNumber == generatedNumber)
             {

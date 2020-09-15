@@ -11,18 +11,18 @@
 {
     <div class="row">
         <div class="col-lg-6">
-            <form asp-action="Play" asp-controller="Home" name="inputForm" method="post">
+            <form  name="inputForm" method="post">
                 <h4>Type 4 digits</h4>
-                <div class="row mb-2">
+                <div class="col-25 mb-2">
                     <input type="number" asp-for="first" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
-                <div class="row mb-2">
+                <div class="col-25 mb-2">
                     <input type="number" asp-for="second" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
-                <div class="row mb-2">
+                <div class="col-25 mb-2">
                     <input type="number" asp-for="third" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
-                <div class="row mb-2">
+                <div class="col-25 mb-2">
                     <input type="number" asp-for="fourth" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
 
@@ -30,12 +30,12 @@
                 @if (Model.leftTries == (int)Enums.Tries.endValue || Model.leftTries == (int)Enums.Tries.initialValue)
                 {
                     <input type="hidden" asp-for="newGame" value="true">
-                    <button type="submit" class="btn btn-primary">New Game</button>
+                    <button type="submit" asp-action="Play" asp-controller="Home" class="btn btn-primary">New Game</button>
                 }
                 else
                 {
                     <input type="hidden" asp-for="newGame" value="false">
-                    <button type="submit" class="btn btn-success">Guess the number</button>
+                    <button type="submit" asp-action="Play" asp-controller="Home" class="btn btn-success">Guess the number</button>
                 }
             </form>
         </div>

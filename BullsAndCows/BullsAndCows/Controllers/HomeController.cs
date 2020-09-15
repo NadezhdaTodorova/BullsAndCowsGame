@@ -58,11 +58,5 @@ namespace BullsAndCows.Controllers
              scoreStatistics.listScoresStatistics = _scoreStatisticsData.GetHighScoreStatistics();
             return View(scoreStatistics);
         }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
     }
 }
