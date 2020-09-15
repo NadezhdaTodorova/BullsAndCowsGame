@@ -1,6 +1,6 @@
 # BullsAndCowsGame
 
-Bulls and Cows C# ASP.Net Core and Entity framework game for guessing a number.
+Bulls and Cows C# ASP.Net Core MVC and Entity framework game for guessing a number.
 
 # How to play
 <p>Copy the repository on your computer or download it as a zip file and then unzip it.</p>

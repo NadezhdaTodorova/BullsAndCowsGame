@@ -8,12 +8,10 @@ namespace BullsAndCows.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly IGame _gameService;
         ScoreStatisticsData _scoreStatisticsData;
-        public HomeController(ILogger<HomeController> logger, IGame gameService, ScoreStatisticsData scoreStatisticsData)
+        public HomeController(IGame gameService, ScoreStatisticsData scoreStatisticsData)
         {
-            _logger = logger;
             _gameService = gameService;
             _scoreStatisticsData = scoreStatisticsData;
         }
