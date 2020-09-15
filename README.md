@@ -3,7 +3,7 @@
 Bulls and Cows C# ASP.Net Core MVC and Entity framework game for guessing a number.
 
 # How to play
-<p>Copy the repository on your computer or download it as a zip file and then unzip it.</p>
+<p>Clone the repository on your computer or download it as a zip file and then unzip it.</p>
 <p>Open the sln. file with visual studio.</p>
 <p>When you try to register apply the migrations with the button or type in the PM console update-database.</p>
 
