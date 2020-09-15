@@ -2,5 +2,17 @@
 .result{
     font-size: 30px;
     font-style: italic;
-    color: black;
+}
+
+.resultTable {
+    height: 50%;
+    width: 25%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 3%;
+    margin-left: 40%;
+}
+
+#leftTries{
+    margin-top: 30%;
 }

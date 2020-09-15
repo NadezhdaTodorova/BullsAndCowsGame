@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using BullsAndCows.Models;
 using BullsAndCows.Interfaces;
 using System.Security.Claims;
 using BullsAndCows.Data;
@@ -34,15 +28,27 @@ namespace BullsAndCows.Controllers
 
         public IActionResult Play(Digit digits)
         {
-            ResultVM result;
+            ResultVM result = new ResultVM();
             ClaimsPrincipal currentUser = User;
 
-            result = _gameService.PlayGame(digits, currentUser);
-            if (result.leftTries == (int)Enums.Tries.endValue)
+            if(digits.first > 9 || digits.first < 0 
+                || digits.second > 9 || digits.second < 0 ||
+                digits.third > 9 || digits.third < 0 || 
+                digits.fourth > 9 || digits.fourth < 0)
             {
-                ModelState.Clear();
+                result.resultMessage = new string[3] { 
+                    "Please provide digits between 0 and 9",
+                    "", "" };
             }
-            
+            else
+            {
+                result = _gameService.PlayGame(digits, currentUser);
+                if (result.leftTries == (int)Enums.Tries.endValue)
+                {
+                    ModelState.Clear();
+                }
+            }
+
             return View("./Index", result);
         }
 

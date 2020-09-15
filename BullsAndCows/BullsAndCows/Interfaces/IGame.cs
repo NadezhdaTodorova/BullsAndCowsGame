@@ -1,15 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 
 namespace BullsAndCows.Interfaces
 {
     public interface IGame
     {
         public ResultVM PlayGame(Digit digits, ClaimsPrincipal currentUser);
-        public string[] FinishGame(string winner, int generatedNumber, int tries);
+        public string[] FinishGame(string winner, string generatedNumber, int tries);
     }
 }

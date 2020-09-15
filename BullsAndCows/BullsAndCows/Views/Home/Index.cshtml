@@ -7,24 +7,23 @@
 @inject SignInManager<IdentityUser> SignInManager
 
 <link href="~/css/Index.css" rel="stylesheet" />
-
 @if (SignInManager.IsSignedIn(User))
 {
     <div class="row">
         <div class="col-lg-6">
-            <form asp-action="Play" asp-controller="Home" method="post">
+            <form asp-action="Play" asp-controller="Home" name="inputForm" method="post">
                 <h4>Type 4 digits</h4>
                 <div class="row mb-2">
-                    <input type="number" asp-for="first" class="form-control col-sm-4" value="0" min="0" max="9">
+                    <input type="number" asp-for="first" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
                 <div class="row mb-2">
-                    <input type="number" asp-for="second" class="form-control col-sm-4" value="0" min="0" max="9">
+                    <input type="number" asp-for="second" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
                 <div class="row mb-2">
-                    <input type="number" asp-for="third" class="form-control col-sm-4" value="0" min="0" max="9">
+                    <input type="number" asp-for="third" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
                 <div class="row mb-2">
-                    <input type="number" asp-for="fourth" class="form-control col-sm-4" value="0" min="0" max="9">
+                    <input type="number" asp-for="fourth" class="form-control col-sm-4" value="" min="0" max="9">
                 </div>
 
 
@@ -43,7 +42,7 @@
 
         @if (Model.playedGame)
         {
-            <div class="col-lg-6">
+            <div class="col-lg-6 resultTable">
                 <table class="table table-bordered table-hover">
                     <thead class="thead-dark">
                         <tr>
@@ -71,15 +70,16 @@
                     </tbody>
                 </table>
             </div>
-
-            <div class="row">
-                <p class="result">
-                    Left tries =  @Model.leftTries
-                </p>
-            </div>
         }
     </div>
-    @if (Model.resultMessage != null)
+
+    <div class="row">
+        <p class="result">
+            Left tries =  @Model.leftTries
+        </p>
+    </div>
+
+    @if (Model.resultMessage != null && Model.resultMessage[0] != null)
     {
         <div class="row mt-5">
             <div class="alert alert-info" role="alert">
@@ -94,7 +94,7 @@ else
         <img src="https://benjdd.com/courses/cs110/fall-2018/pas/bulls_and_cows/res/bulls_and_cows.png" class="img-fluid w-75" alt="Responsive image">
     </div>
     <div class="text-center">
-        <h4>How to play!</h4>
+        <h3>How to play!</h3>
         <h5>The computer generates a 4-digit number.</h5>
         <h5>There can be no repeating digits!</h5>
         <h5>If the matching digits are in their right positions, they are "bulls", if in different positions, they are "cows".</h5>

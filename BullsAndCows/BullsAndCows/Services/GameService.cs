@@ -14,6 +14,7 @@ namespace BullsAndCows
         private ScoreStatisticsData _scoreStatistics;
         private static string gameId;
         private static int leftTries;
+        private string[] message = new string[3];
 
         public GameService(Random generateRandomNumber,
             ScoreStatisticsData scoreStatisticsData)
@@ -24,7 +25,8 @@ namespace BullsAndCows
 
         public ResultVM PlayGame(Digit digits, ClaimsPrincipal currentUser)
         {
-            ResultVM result = new ResultVM();
+            ResultVM result;
+
             string guessedNumber = digits.first.ToString() +
                 digits.second.ToString() +
                 digits.third.ToString() +
@@ -32,13 +34,14 @@ namespace BullsAndCows
 
             if (!DistinctDigits(guessedNumber))
             {
-                leftTries = (int)Enums.Tries.initialValue;
-                result.resultMessage = new string[3];
-                result.resultMessage[0] = "There can be no repeating digits!";
+                message[0] = "There can be no repeating numbers!";
+                result = HandleResult(leftTries, message);
+                if (leftTries == (int)Enums.Tries.initialValue || leftTries == (int)Enums.Tries.endValue)
+                    result.leftTries = (int)Enums.Tries.initialValue;
                 return result;
             }
 
-            if (digits.newGame) {
+            if (digits.newGame || leftTries == (int)Enums.Tries.endValue) {
                 Guid g = Guid.NewGuid();
                 generatedNumber = GenerateNumber();
                 leftTries = (int)Enums.Tries.initialValue;
@@ -47,23 +50,31 @@ namespace BullsAndCows
 
             if (guessedNumber == generatedNumber)
             {
-                result.resultMessage = FinishGame("User", int.Parse(generatedNumber), leftTries);
-                result.leftTries = (int)Enums.Tries.endValue;
+                HandleTurn(guessedNumber);
+                result = HandleResult((int)Enums.Tries.endValue, FinishGame("User", generatedNumber, leftTries));
                 return result;
             }
             else
             {
                 HandleTurn(guessedNumber);
-                result.playedGame = true;
-                result.leftTries = leftTries;
+                result = HandleResult(leftTries, message);
             }
-
-            result.listUserTurns = _scoreStatistics.GetCurrentUserTurns(gameId);
 
             if (result.leftTries <= (int)Enums.Tries.endValue)
             {
-                result.resultMessage = FinishGame("Computer", int.Parse(generatedNumber), leftTries);
+               result = HandleResult(leftTries, FinishGame("Computer", generatedNumber, leftTries));
             }
+
+            return result;
+        }
+
+        private ResultVM HandleResult(int tries, string[] message)
+        {
+            ResultVM result = new ResultVM();
+            result.leftTries = tries;
+            result.playedGame = true;
+            result.resultMessage = message;
+            result.listUserTurns = _scoreStatistics.GetCurrentUserTurns(gameId);
 
             return result;
         }
@@ -145,13 +156,13 @@ namespace BullsAndCows
             return number;
         }
 
-        public string[]  FinishGame(string winner, int generatedNumber, int leftTries)
+        public string[]  FinishGame(string winner, string generatedNumber, int leftTries)
         {
             string[] message = new string [3];
             int tries = (int)Enums.Tries.initialValue - leftTries;
             if (winner == "User")
             {
-                message[0] = "Congratulations! You guessed the number. You score 50";
+                message[0] = $"Congratulations! You guessed the number {generatedNumber}. You score 50";
                 message[1] = Enums.WinnerScore.userWinScore.ToString();
                 message[2] = $"{tries}";
                 _scoreStatistics.SaveUserScore(50, tries);
